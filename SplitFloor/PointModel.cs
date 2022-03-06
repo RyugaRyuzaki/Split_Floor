@@ -26,14 +26,15 @@ namespace SplitFloor
             if (!(Math.Abs(vecPoToLineOrigin.DotProduct(l.Direction)) < 1e-9))
             {
 
-                if (vecPoToLineOrigin.AngleTo(l.Direction)>Math.PI*0.5)
-                {
-                    return l.GetEndPoint(0) - l.Direction * vecPoToLineOrigin.DotProduct(l.Direction);
-                }
-                else
-                {
-                    return l.GetEndPoint(0) + l.Direction * vecPoToLineOrigin.DotProduct(l.Direction);
-                }
+                return l.GetEndPoint(0) + l.Direction * vecPoToLineOrigin.DotProduct(l.Direction);
+                //if (vecPoToLineOrigin.AngleTo(l.Direction)>Math.PI*0.5)
+                //{
+                //    return l.GetEndPoint(0) - l.Direction * vecPoToLineOrigin.DotProduct(l.Direction);
+                //}
+                //else
+                //{
+                //    return l.GetEndPoint(0) + l.Direction * vecPoToLineOrigin.DotProduct(l.Direction);
+                //}
             }
             else
             {

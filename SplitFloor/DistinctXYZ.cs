@@ -14,7 +14,7 @@ namespace SplitFloor
 
         public int GetHashCode(XYZ obj)
         {
-            return 1;
+            return 0;
         }
         public static bool AreEqual(double firstValue, double secondValue, double tolerance = 1.0e-9)
         {

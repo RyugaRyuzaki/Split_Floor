@@ -64,26 +64,29 @@ namespace SplitFloor
                         }
                         else
                         {
-                            if (NoneOverlapModelCurves(allModelCurve))
-                            {
-                                allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
-                                CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
-                            }
-                            else
-                            {
-                                allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
+                            allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
+
+                            CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
+                            //if (NoneOverlapModelCurves(allModelCurve))
+                            //{
+                            //    allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
+                            //    CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
+                            //}
+                            //else
+                            //{
+                            //    allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
                               
-                                bool outside = NoneOverlapModelCurvesOrOutSidePoint(allModelCurve, curvesFloor);
-                                if (outside)
-                                {
-                                    CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
-                                }
-                                else
-                                {
-                                    DeleteFloor(doc, floor);
-                                    List<Floor> floors = GetSplitFloorMultipleModelCurve(doc, floorType, structural, level, curvesFloor, allModelCurve);
-                                }
-                            }
+                            //    bool outside = NoneOverlapModelCurvesOrOutSidePoint(allModelCurve, curvesFloor);
+                            //    if (outside)
+                            //    {
+                            //        CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
+                            //    }
+                            //    else
+                            //    {
+                            //        DeleteFloor(doc, floor);
+                            //        List<Floor> floors = GetSplitFloorMultipleModelCurve(doc, floorType, structural, level, curvesFloor, allModelCurve);
+                            //    }
+                            //}
                         }
 
                         return Result.Succeeded;
@@ -176,6 +179,7 @@ namespace SplitFloor
                 else
                 {
                     curveNoneIntersect.Add(item);
+
                 }
                
             }
@@ -192,6 +196,7 @@ namespace SplitFloor
             }
             AllInterSectPoint= AllInterSectPoint.Distinct(new DistinctXYZ()).ToList();
         }
+       
         private List<Curve> GetListCurveIntersecWithPoint( List<XYZ> AllInterSectPoint,  List<Curve> curveIntersect)
         {
             List<Curve> curves = new List<Curve>();
@@ -323,16 +328,20 @@ namespace SplitFloor
                 for (int i = 0; i < MulticurvesFloor.Count; i++)
                 {
                     CurveArray curveArray = GetCurveArrayFromCurve(MulticurvesFloor[i]);
-                    try
+                    if (curveArray.Size!=0)
                     {
-                        Floor floor0 = doc.Create.NewFloor(curveArray, floorType, level, structural, XYZ.BasisZ);
-                       
-                    }
-                    catch (Exception e)
-                    {
+                        try
+                        {
+                            Floor floor0 = doc.Create.NewFloor(curveArray, floorType, level, structural, XYZ.BasisZ);
 
-                        System.Windows.Forms.MessageBox.Show(e.Message);
+                        }
+                        catch (Exception e)
+                        {
+
+                            System.Windows.Forms.MessageBox.Show(e.Message+": "+i);
+                        }
                     }
+                    
 
                 }
                 tran.Commit();
@@ -343,86 +352,53 @@ namespace SplitFloor
             List<Floor> floors = new List<Floor>();
             List<List<Curve>> list = new List<List<Curve>>();
             list.Add(curvesFloor);
+            int numberList = list.Count;
             for (int i = 0; i < allModelCurve.Count; i++)
             {
-                for (int j = 0; j < list.Count; j++)
+              
+                for (int j = 0; j < numberList; j++)
                 {
                     if (GetNumberPointIntersectOneCModelCurve(list[j], allModelCurve[i]))
                     {
-                        if (i == 0)
+                        List<XYZ> AllInterSectPoint;
+                        List<Curve> CurveIntersect0;
+                        List<Curve> CurveNoneIntersect;
+                        GetNumberPointIntersectofListCurve(list[j], allModelCurve[i], out AllInterSectPoint, out CurveIntersect0, out CurveNoneIntersect);
+                        List<Curve> CurveIntersect = GetListCurveIntersecWithPoint(AllInterSectPoint, CurveIntersect0);
+                        List<Curve> Left;
+                        List<Curve> Right;
+                        SplitCurveLeftOrRight(CurveIntersect, CurveNoneIntersect, allModelCurve[i], out Left, out Right, AllInterSectPoint);
+                        List<Curve> Left1 = ChangeCurvesToIsClockOverwise(Left);
+                        List<Curve> Right1 = ChangeCurvesToIsClockOverwise(Right);
+                        list.RemoveAt(j);
+                        list.Add(Left1);
+                        list.Add(Right1);
+                        if (i != 0) DeleteFloor(doc, floors[j]);
+                        CurveArray curveArrayLeft = GetCurveArrayFromCurve(Left1);
+                        CurveArray curveArrayRight = GetCurveArrayFromCurve(Right1);
+                        using (Transaction tran = new Transaction(doc))
                         {
-                            List<XYZ> AllInterSectPoint;
-                            List<Curve> CurveIntersect0;
-                            List<Curve> CurveNoneIntersect;
-                            GetNumberPointIntersectofListCurve(list[j], allModelCurve[i], out AllInterSectPoint, out CurveIntersect0, out CurveNoneIntersect);
-                            List<Curve> CurveIntersect = GetListCurveIntersecWithPoint(AllInterSectPoint, CurveIntersect0);
-                            List<Curve> Left;
-                            List<Curve> Right;
-                            SplitCurveLeftOrRight(CurveIntersect, CurveNoneIntersect, allModelCurve[i], out Left, out Right, AllInterSectPoint);
-                            List<Curve> Left1 = ChangeCurvesToIsClockOverwise(Left);
-                            List<Curve> Right1 = ChangeCurvesToIsClockOverwise(Right);
-                            list.RemoveAt(j);
-                            list.Add(Left1);
-                            list.Add(Right1);
-                            CurveArray curveArrayLeft = GetCurveArrayFromCurve(Left1);
-                            CurveArray curveArrayRight = GetCurveArrayFromCurve(Right1);
-                            using (Transaction tran = new Transaction(doc))
+                            tran.Start("aaa");
+                            try
                             {
-                                tran.Start("aaa");
-                                try
-                                {
-                                    Floor floorLeft = doc.Create.NewFloor(curveArrayLeft, floorType, level, structural, XYZ.BasisZ);
-                                    Floor floorRight = doc.Create.NewFloor(curveArrayRight, floorType, level, structural, XYZ.BasisZ);
-                                    floors.Add(floorLeft);
-                                    floors.Add(floorRight);
-                                }
-                                catch (Exception e)
-                                {
-                                    System.Windows.Forms.MessageBox.Show(e.Message);
-                                }
-
-                                tran.Commit();
+                                Floor floorLeft = doc.Create.NewFloor(curveArrayLeft, floorType, level, structural, XYZ.BasisZ);
+                                Floor floorRight = doc.Create.NewFloor(curveArrayRight, floorType, level, structural, XYZ.BasisZ);
+                                floors.Add(floorLeft);
+                                floors.Add(floorRight);
                             }
-                        }
-                        else
-                        {
-                            List<XYZ> AllInterSectPoint;
-                            List<Curve> CurveIntersect0;
-                            List<Curve> CurveNoneIntersect;
-                            GetNumberPointIntersectofListCurve(list[j], allModelCurve[i], out AllInterSectPoint, out CurveIntersect0, out CurveNoneIntersect);
-                            List<Curve> CurveIntersect = GetListCurveIntersecWithPoint(AllInterSectPoint, CurveIntersect0);
-                            List<Curve> Left;
-                            List<Curve> Right;
-                            SplitCurveLeftOrRight(CurveIntersect, CurveNoneIntersect, allModelCurve[i], out Left, out Right, AllInterSectPoint);
-                            List<Curve> Left1 = ChangeCurvesToIsClockOverwise(Left);
-                            List<Curve> Right1 = ChangeCurvesToIsClockOverwise(Right);
-                            list.RemoveAt(j);
-                            list.Add(Left1);
-                            list.Add(Right1);
-                            DeleteFloor(doc, floors[j]);
-                            CurveArray curveArrayLeft = GetCurveArrayFromCurve(Left1);
-                            CurveArray curveArrayRight = GetCurveArrayFromCurve(Right1);
-                            using (Transaction tran = new Transaction(doc))
+                            catch (Exception e)
                             {
-                                tran.Start("aaa");
-                                try
-                                {
-                                    Floor floorLeft = doc.Create.NewFloor(curveArrayLeft, floorType, level, structural, XYZ.BasisZ);
-                                    Floor floorRight = doc.Create.NewFloor(curveArrayRight, floorType, level, structural, XYZ.BasisZ);
-                                    floors.Add(floorLeft);
-                                    floors.Add(floorRight);
-                                }
-                                catch (Exception e)
-                                {
-                                    System.Windows.Forms.MessageBox.Show(e.Message);
-                                }
 
-                                tran.Commit();
+                                System.Windows.Forms.MessageBox.Show(e.Message);
+                                
                             }
+
+                            tran.Commit();
                         }
-                        break;
+                      
                     }
                 }
+                numberList = list.Count;
             }
             return floors;
         }
@@ -430,49 +406,34 @@ namespace SplitFloor
         {
             List<List<Curve>> list = new List<List<Curve>>();
             list.Add(curvesFloor);
+           
             for (int i = 0; i < allModelCurve.Count; i++)
             {
-                for (int j = 0; j < list.Count; j++)
+
+                List<List<Curve>> list1 = new List<List<Curve>>(list);
+                for (int j = 0; j < list1.Count; j++)
                 {
-                    if (GetNumberPointIntersectOneCModelCurve(list[j], allModelCurve[i]))
+                    List<Curve> Left1=new List<Curve>();
+                    List<Curve> Right1= new List<Curve>();
+                    
+                    if (GetNumberPointIntersectOneCModelCurve(list1[j], allModelCurve[i]))
                     {
-                        if (i == 0)
-                        {
-                            List<XYZ> AllInterSectPoint;
-                            List<Curve> CurveIntersect0;
-                            List<Curve> CurveNoneIntersect;
-
-                            GetNumberPointIntersectofListCurve(list[j], allModelCurve[i], out AllInterSectPoint, out CurveIntersect0, out CurveNoneIntersect);
-                            List<Curve> CurveIntersect = GetListCurveIntersecWithPoint(AllInterSectPoint, CurveIntersect0);
-                            List<Curve> Left;
-                            List<Curve> Right;
-                            SplitCurveLeftOrRight(CurveIntersect, CurveNoneIntersect, allModelCurve[i], out Left, out Right, AllInterSectPoint);
-                            List<Curve> Left1 = ChangeCurvesToIsClockOverwise(Left);
-                            List<Curve> Right1 = ChangeCurvesToIsClockOverwise(Right);
-                            list.RemoveAt(j);
-                            list.Add(Left1);
-                            list.Add(Right1);
-
-                        }
-                        else
-                        {
-                            List<XYZ> AllInterSectPoint;
-                            List<Curve> CurveIntersect0;
-                            List<Curve> CurveNoneIntersect;
-                            GetNumberPointIntersectofListCurve(list[j], allModelCurve[i], out AllInterSectPoint, out CurveIntersect0, out CurveNoneIntersect);
-                            List<Curve> CurveIntersect = GetListCurveIntersecWithPoint(AllInterSectPoint, CurveIntersect0);
-                            List<Curve> Left;
-                            List<Curve> Right;
-                            SplitCurveLeftOrRight(CurveIntersect, CurveNoneIntersect, allModelCurve[i], out Left, out Right, AllInterSectPoint);
-                            List<Curve> Left1 = ChangeCurvesToIsClockOverwise(Left);
-                            List<Curve> Right1 = ChangeCurvesToIsClockOverwise(Right);
-                            list.RemoveAt(j);
-                            list.Add(Left1);
-                            list.Add(Right1);
-                        }
-                        break;
+                       
+                        GetNumberPointIntersectofListCurve(list1[j], allModelCurve[i], out List<XYZ> AllInterSectPoint, out List<Curve> CurveIntersect0, out List<Curve> CurveNoneIntersect);
+                       
+                        List<Curve> CurveIntersect = GetListCurveIntersecWithPoint(AllInterSectPoint, CurveIntersect0);
+                        SplitCurveLeftOrRight(CurveIntersect, CurveNoneIntersect, allModelCurve[i], out List<Curve> Left, out List<Curve> Right, AllInterSectPoint);
+                         Left1 = ChangeCurvesToIsClockOverwise(Left);
+                         Right1 = ChangeCurvesToIsClockOverwise(Right);
+                        list.Add(Left1);
+                     list.Add(Right1);
+                        list.Remove(list1[j]);
+                       
+                        //break;
                     }
+                    
                 }
+               
             }
             return list;
         }
@@ -562,12 +523,13 @@ namespace SplitFloor
             foreach (var item in curvesFloor)
             {
                 IntersectionResultArray inter = new IntersectionResultArray();
-
+            
                 if (item.Intersect(modelCurve, out inter) == SetComparisonResult.Overlap)
                 {
                     if (inter.Size != 0) { intersectionResultArray.Add(inter); }
 
                 }
+                
 
             }
             foreach (var item in intersectionResultArray)
@@ -582,6 +544,10 @@ namespace SplitFloor
                 }
             }
             AllInterSectPoint = AllInterSectPoint.Distinct(new DistinctXYZ()).ToList();
+            //for (int i = 0; i < AllInterSectPoint.Count; i++)
+            //{
+            //    System.Windows.Forms.MessageBox.Show(AllInterSectPoint[i].ToString());
+            //}
             return AllInterSectPoint.Count == 2;
         }
         private bool IsLeftOrRight(Curve a, Curve model)
@@ -600,6 +566,7 @@ namespace SplitFloor
                 XYZ vh = vec.CrossProduct((model as Line).Direction);
                 return AreEqual(vh.AngleTo(XYZ.BasisZ), 0);
             }
+
         }
         private List<XYZ> GetAllXYZFromListCurves(List<Curve> curves)
         {
@@ -625,7 +592,7 @@ namespace SplitFloor
                 z.Add(item.Z);
             }
 
-            return new XYZ((x.Sum() / x.Count), (y.Sum() / y.Count), (z.Sum() / z.Count));
+            return new XYZ((x.Average()), (y.Average()), (z.Average()));
         }
        
          private CurveArray GetCurveArrayFromCurve(List<Curve> curves)

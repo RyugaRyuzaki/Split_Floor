@@ -50,6 +50,7 @@ namespace SplitFloor
                     }
                     if (top != null)
                     {
+                        double a = DateTime.Now.Second;
                         EdgeArrayArray edgeArrayArray = top.EdgeLoops;
                         if (edgeArrayArray.Size > 1)
                         {
@@ -64,31 +65,13 @@ namespace SplitFloor
                         }
                         else
                         {
-                            allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
+                            //allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
 
                             CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
-                            //if (NoneOverlapModelCurves(allModelCurve))
-                            //{
-                            //    allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
-                            //    CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
-                            //}
-                            //else
-                            //{
-                            //    allModelCurve = allModelCurve.Where(x => GetNumberPointIntersectOneCModelCurve(curvesFloor, x)).ToList();
-                              
-                            //    bool outside = NoneOverlapModelCurvesOrOutSidePoint(allModelCurve, curvesFloor);
-                            //    if (outside)
-                            //    {
-                            //        CreateSplitFloorMultipleModelCurve(doc, floorType, structural, level, floor, GetAllListListCurvesMultipleModelCurveNoneIntersect(curvesFloor, allModelCurve));
-                            //    }
-                            //    else
-                            //    {
-                            //        DeleteFloor(doc, floor);
-                            //        List<Floor> floors = GetSplitFloorMultipleModelCurve(doc, floorType, structural, level, curvesFloor, allModelCurve);
-                            //    }
-                            //}
+                           
                         }
-
+                        double b = DateTime.Now.Second;
+                        System.Windows.Forms.MessageBox.Show("Test"+(b )+" "+a);
                         return Result.Succeeded;
                     }
                     else

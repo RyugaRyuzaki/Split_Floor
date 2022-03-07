@@ -58,9 +58,12 @@
     <Compile Include="DistinctCurve.cs" />
     <Compile Include="DistinctXYZ.cs" />
     <Compile Include="FloorFilter.cs" />
+    <Compile Include="LineProcess.cs" />
     <Compile Include="ModelCurveFilter.cs" />
     <Compile Include="PointModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SolidFace.cs" />
+    <Compile Include="WallDetailLine.cs" />
     <Compile Include="RevitCmd.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -182,11 +182,11 @@ namespace ReplaceViewSheet
             }
             return views;
         }
-        private ObservableCollection<WallType> FilterWallTypeUserUsed(List<Wall> walls, List<WallType> wallTypes0)
+        private ObservableCollection<ElementType> FilterWallTypeUserUsed(List<Wall> walls, List<ElementType> wallTypes0)
         {
             // đầu tiên thay thế list walltype mới;
-            ObservableCollection<WallType> wallTypes =new ObservableCollection<WallType>( wallTypes0);
-            ObservableCollection<WallType> wallTypes1 =new ObservableCollection<WallType>( wallTypes0);
+            ObservableCollection<ElementType> wallTypes =new ObservableCollection<ElementType>( wallTypes0);
+            ObservableCollection<ElementType> wallTypes1 =new ObservableCollection<ElementType>( wallTypes0);
             // chạy vòng lập các walltype mới
             for (int i = 0; i < wallTypes.Count; i++)
             {

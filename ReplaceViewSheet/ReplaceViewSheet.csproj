@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F7E0B6C8-1BD2-45A6-BA39-918C28BADE41}</ProjectGuid>
+    <ProjectGuid>{60A54A71-E2AC-48D2-945D-2A16A9B136CD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SplitFloor</RootNamespace>
-    <AssemblyName>Revit</AssemblyName>
+    <RootNamespace>ReplaceViewSheet</RootNamespace>
+    <AssemblyName>ReplaceViewSheet</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -35,9 +35,7 @@
     <StartProgram>$(ProgramW6432)\Autodesk\Revit 2020\Revit.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="RevitAPI">
@@ -50,28 +48,35 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
+    <Reference Include="System.Management" />
+    <Reference Include="WpfCustomControls">
+      <HintPath>..\..\..\..\Confused\2021\WpfCustomControls.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DistinctCurve.cs" />
-    <Compile Include="DistinctXYZ.cs" />
-    <Compile Include="FloorFilter.cs" />
-    <Compile Include="LineProcess.cs" />
-    <Compile Include="ModelCurveFilter.cs" />
-    <Compile Include="PointModel.cs" />
+    <Compile Include="Command\ReplaceViewSheetCmd.cs" />
+    <Compile Include="Model\Languages.cs" />
+    <Compile Include="Model\ViewSheetModel.cs" />
+    <Compile Include="ViewModel\ReplaceViewSheetViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RevitCmd.cs" />
+    <Compile Include="View\ReplaceViewSheetWindow.xaml.cs">
+      <DependentUpon>ReplaceViewSheetWindow.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Page Include="View\ReplaceViewSheetWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.1778
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitFloor", "SplitFloor\SplitFloor.csproj", "{F7E0B6C8-1BD2-45A6-BA39-918C28BADE41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplaceViewSheet", "ReplaceViewSheet\ReplaceViewSheet.csproj", "{60A54A71-E2AC-48D2-945D-2A16A9B136CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F7E0B6C8-1BD2-45A6-BA39-918C28BADE41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7E0B6C8-1BD2-45A6-BA39-918C28BADE41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7E0B6C8-1BD2-45A6-BA39-918C28BADE41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60A54A71-E2AC-48D2-945D-2A16A9B136CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60A54A71-E2AC-48D2-945D-2A16A9B136CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60A54A71-E2AC-48D2-945D-2A16A9B136CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60A54A71-E2AC-48D2-945D-2A16A9B136CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
